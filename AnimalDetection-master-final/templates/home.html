@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{{ url_for('static', filename = 'css/bootstrap.min.css') }}">
+
+
+  <title>Animal Detection Live Update</title>
+</head>
+
+<body>
+
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Villagers safety project</h5>
+    
+      <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="/">Home</a>
+        <a class="p-2 text-dark" href="/moni">Alert history</a>
+    </nav>
+    
+    
+  </div>
+
+  <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Wild animal detection</h1>
+    <p class="lead">A cost effective animal detection and alert system</p>
+  </div>
+
+  <div class="container">
+    <div class="card-deck mb-3 text-center">
+      <div class="card mb-4 box-shadow">
+        <div class="card-header">
+          <h4 class="my-0 font-weight-normal">Image detect</h4>
+        </div>
+        <div class="card-body">
+          <br>
+          <h1 class="card-title pricing-card-title">Add Image <br><small class="text-muted">Simple detection</small>
+          </h1>
+          <ul class="list-unstyled mt-3 mb-4">
+            <li>Select Image</li>
+            <li>Send to python backend</li>
+            <li>Process image</li>
+            <li>Display Output</li>
+          </ul>
+          <form id="upload-file" method="post" enctype="multipart/form-data">
+            <fieldset>
+
+
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="customFile" name="file">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+              </div>
+
+
+            </fieldset>
+
+            <br>
+            <button id="upload-file-btn" class="btn btn-lg btn-block btn-primary" type="button">Upload Image</button>
+            </fieldset>
+            <br><img class="myimage" src="" width="100%" alt="" />
+            <h2 class='result'></h2><br>
+            <fieldset>
+          </form>
+
+        </div>
+      </div>
+      <div class="card mb-4 box-shadow">
+        <div class="card-header">
+          <h4 class="my-0 font-weight-normal">Video Detect</h4>
+        </div>
+        <div class="card-body">
+          <br>
+          <h1 class="card-title pricing-card-title">Add Video <br><small class="text-muted">Video Complex</small></h1>
+          <ul class="list-unstyled mt-3 mb-4">
+            <li>Select video</li>
+            <li>Send to python backend</li>
+            <li>Process Video</li>
+            <li>Show Live processing output</li>
+          </ul>
+          <form id="upload-file2" method="post" enctype="multipart/form-data">
+            <fieldset>
+
+
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="customFile2" name="file">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+              </div>
+
+
+            </fieldset>
+            <fieldset>
+              <br>
+              <button id="upload-file-btn2" class="btn btn-lg btn-block btn-primary" type="button">Upload Video</button>
+            </fieldset>
+            <br>
+            
+
+            <img class="myimage1" src="" width="100%" alt = "">
+            <h2 class='result1'></h2><br>
+          </form>
+        </div>
+      </div>
+      <div class="card mb-4 box-shadow">
+        <div class="card-header">
+          <h4 class="my-0 font-weight-normal">Live detection</h4>
+        </div>
+        <div class="card-body">
+          <br>
+          <h1 class="card-title pricing-card-title">Watch Live<br><small class="text-muted">Live from base station
+            </small></h1>
+          <ul class="list-unstyled mt-3 mb-4">
+            <li>Go to live screen</li>
+            <li>press show live</li>
+            <li>Live Footage </li>
+          </ul>
+          <br><br>
+          <form id="upload-file3" method="post" enctype="multipart/form-data">
+
+            <fieldset>
+              <br>
+              <button id="upload-file-btn3" class="btn btn-lg btn-block btn-outline-danger" type="button">Live stream</button>
+              <button id="upload-file-btn4" class="btn btn-lg btn-block btn-outline-danger" type="button">Stop Stram</button>
+            </fieldset>
+            <br>
+            
+
+            <img class="myimage3" src="" width="100%" alt = "">
+            <h2 class='result3'></h2><br>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- Javascript -->
+  <script src="{{ url_for('static', filename = 'js/jquery-3.2.1.slim.min.js') }}"></script>
+  <script src="{{ url_for('static', filename = 'js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename = 'js/popper.min.js') }}"></script>
+  <script src="{{ url_for('static', filename = 'js/bootstrap.min.js') }}"></script>
+
+
+  <script>
+
+
+    // $(".myimage1").hide()
+    $(".custom-file-input").on("change", function () {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    $(function () {
+      $('#upload-file-btn').click(function () {
+        var fd = new FormData();
+        fd.append("file", document.getElementById('customFile').files[0]);
+        $(".result").html('Detecting...');
+
+        $.ajax({
+          url: '/upload',
+          type: 'POST',
+          data: fd,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            $(".myimage").attr('src', "{{ url_for('static', filename = 'out/out.jpg') }}" + "?_=" + new Date().getTime());
+            $(".result").html(response.result.toString());
+          },
+
+        });
+      });
+    });
+
+    $(function () {
+      $('#upload-file-btn2').click(function () {
+        $(".myimage1").attr('src', "{{ url_for('video_feed') }}"+ "?_=" + new Date().getTime());
+        $(".result1").html('Processing Video...');
+
+        var fd = new FormData();
+        fd.append("file", document.getElementById('customFile2').files[0]);
+
+
+        $.ajax({
+          url: '/uploadvid',
+          type: 'POST',
+          data: fd,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            
+            
+            $(".result1").html(response.result.toString());
+          },
+
+        });
+      });
+    });
+
+    $(function () {
+      $('#upload-file-btn3').click(function () {
+        $(".myimage3").attr('src', "{{ url_for('video_feed') }}"+ "?_=" + new Date().getTime());
+        $(".result3").html('Live Video');
+
+        var fd = new FormData();
+        fd.append("file", document.getElementById('customFile2').files[0]);
+
+
+        $.ajax({
+          url: '/livevid',
+          type: 'POST',
+          data: false,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            
+            
+            $(".result3").html("");
+          },
+
+        });
+      });
+    });
+
+    $(function () {
+      $('#upload-file-btn4').click(function () {
+        $(".myimage3").attr('src', "");
+        $(".result3").html('Stopped');
+
+        var fd = new FormData();
+        fd.append("file", document.getElementById('customFile2').files[0]);
+
+        json = JSON.parse('{"status":"stop", "stat":"stop"}')
+        var URL = "/stop/test.json"
+        console.log(json)
+        $.ajax({
+          url: URL,
+          type: 'GET',
+          data: json,
+          dataType: 'json',
+          success: function (response) {
+            
+            
+            
+          },
+
+        });
+      });
+    });
+
+
+  </script>
+
+
+</body>
+
+</html>

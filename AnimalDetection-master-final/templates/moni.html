@@ -1,0 +1,59 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{{ url_for('static', filename = 'css/bootstrap.min.css') }}">
+
+
+  <title>Animal Detection Live Update</title>
+</head>
+
+<body>
+
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Villagers safety project</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="/">Home</a>
+        <a class="p-2 text-dark" href="/moni">Alert history</a>
+    </nav>
+    
+  </div>
+
+<div class="d-flex justify-content-center align-middle" style="margin-top: 140px;">
+    <form method="POST" enctype = "multipart/form-data" action = "http://localhost:5000/hist">
+        <div class="row">
+          <input class="form-control col" type="date" name="date" value = "2021-06-01">
+          <input class="btn btn-primary" type="submit" style="margin-left: 10px;">
+        </div>
+</form>
+
+  </div>
+  {% if data %}
+  <div class="col-xs-12" style="margin-top: 10px;">
+    <table class="table table-striped text-primary">
+      <thead>
+        <tr>
+          <th scope="col">Animal detected </th>
+          <th scope="col">Date</th>
+          <th scope="col">Time</th>
+        </tr>
+      </thead>
+               {% for res in data %}
+               <tr>
+                <td>{% if res['animal'] != '' %}
+                  {{ res['animal'] }}
+                  {% else %}
+                  {{ "Unknown" }}
+                  {% endif %}
+                </td>
+                <td>{{ res['date'] }}</td>
+                <td>{{ res['time'] }}</td>
+              </tr>
+               {% endfor %}
+    </table>
+    </div>
+    {% endif %}
